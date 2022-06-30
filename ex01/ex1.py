@@ -21,18 +21,19 @@ x = np.linspace(0, L, n)
 y = np.linspace(0, L, n)
 T = Ti * np.ones([n, n]) # Ti deixa o valor inicial em toda a matriz
 
-# aplicando as temperaturas nas extremidades
-T[0:n-1, 0] = Te
-T[0:n-1, n-1] = Te
-T[0, 0:n-1] = Te
-T[n-1, 0:n-1] = Te
+def temperaturas_constantes():
+    # aplicando as temperaturas nas extremidades
+    T[0:n-1, 0] = Te
+    T[0:n-1, n-1] = Te
+    T[0, 0:n-1] = Te
+    T[n-1, 0:n-1] = Te
 
-# aplicando as temperaturas no buraco da chapa
-meio = int(n/2) # metade do tamanho da chapa
-tamanho = int(meio/4) # tamanho do buraco
-for k in range(int(n/4)):
-    T[meio-tamanho+k, meio-tamanho:meio+tamanho] = 100
-
+    # aplicando as temperaturas no buraco da chapa
+    meio = int(n/2) # metade do tamanho da chapa
+    tamanho = int(meio/4) # tamanho do buraco
+    for k in range(int(n/4)):
+        T[meio-tamanho+k, meio-tamanho:meio+tamanho] = Tb
+temperaturas_constantes()
 # iniciar método de euler explícito
 imag_10s = True
 imag_20s = True
@@ -45,8 +46,7 @@ while True:
             T[i, j] = To[i, j] + dt*a*(((To[i-1, j] - 2*To[i, j] + To[i+1, j])/dx**2) + 
                                         ((To[i, j-1] - 2*To[i,j] + To[i, j+1])/dy**2))
             # aplicando as temperaturas no buraco da chapa, pois são constantes
-            for k in range(int(n/4)):
-                T[meio-tamanho+k, meio-tamanho:meio+tamanho] = Tb
+            temperaturas_constantes()
     
     t += dt
     # verifica se chegou nos tempos para salvar o estado atual e depois plotar

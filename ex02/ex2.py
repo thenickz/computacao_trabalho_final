@@ -21,13 +21,13 @@ x = np.linspace(0, L, n)
 y = np.linspace(0, L, n)
 T = Ti * np.ones([n, n]) # Ti deixa o valor inicial em toda a matriz
 
-# aplicando as temperaturas nas extremidades
-T[0:n-1, 0] = Te
-T[0:n-1, n-1] = Te
-T[0, 0:n-1] = Te
-T[n-1, 0:n-1] = Te
-# aplicando as temperaturas no buraco da chapa
-def meio_da_chapa():
+def temperaturas_constantes():
+    # aplicando as temperaturas nas extremidades
+    T[0:n-1, 0] = Te
+    T[0:n-1, n-1] = Te
+    T[0, 0:n-1] = Te
+    T[n-1, 0:n-1] = Te
+    # aplicando as temperaturas no buraco da chapa
     meio = int(n/2) # metade do tamanho da chapa
     tamanho = int(meio*2/3) # tamanho do buraco
     T[meio, meio:meio+tamanho] = Tb
@@ -36,23 +36,20 @@ def meio_da_chapa():
         T[meio-tamanho+k, meio:meio-k:-1] = Tb
         T[meio+tamanho-k, meio:meio+k] = Tb
         T[meio:meio+k, meio-tamanho+k:meio] = Tb
+temperaturas_constantes()
 
-
-meio_da_chapa()
 # iniciar método de euler explícito
 imag_10s = True
 imag_20s = True
 t = 0
-
 inicio = time.time()
-print(inicio)
 while True:
     To = T.copy() # salva os valores da matriz T
     for j in range(1, n-1):
         for i in range(1, n-1):
             T[i, j] = To[i, j] + dt*a*(((To[i-1, j] - 2*To[i, j] + To[i+1, j])/dx**2) + ((To[i, j-1] - 2*To[i,j] + To[i, j+1])/dy**2))
             # aplicando as temperaturas no buraco da chapa, pois são constantes
-            meio_da_chapa()
+            temperaturas_constantes()
     t += dt
     # verifica se chegou nos tempos para salvar o estado atual e depois plotar
     if t >= 10 and imag_10s:
@@ -63,6 +60,8 @@ while True:
         T20 = T.copy()
     elif t >= tempo_total:
         T30 = T.copy()
+        # saindo do loop pois t já chegou em 30s
+        break
 
 # por ser 3 gráficos decidi salvar como imagem para visualizar todos no final
 # preparando plot
@@ -84,5 +83,5 @@ def salvar_grafico(arquivo_nome, matrix, tempo):
 # salvando as imagens
 salvar_grafico('chapa_02_t', T10, 10)
 salvar_grafico('chapa_02_t', T20, 20)
-salvar_grafico('chapa_02_t', T30, tempo_total)
-print('tempo: {}  FIM'.format(time.time()-inicio))
+salvar_grafico('chapa_02_t', T30, 30)
+print('tempo: {}  FIM'.format(time.time()-inicio))        
