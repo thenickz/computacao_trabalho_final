@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time 
 
+
 # configurando variáveis
 tempo_total = 30
 Te = 20 # temperatura na extremidade
@@ -38,17 +39,14 @@ imag_20s = True
 t = 0
 inicio = time.time()
 while True:
-    To = T.copy() # salva os valores da matrix T
+    To = T.copy() # salva os valores da matriz T
     for j in range(1, n-1):
         for i in range(1, n-1):
             T[i, j] = To[i, j] + dt*a*(((To[i-1, j] - 2*To[i, j] + To[i+1, j])/dx**2) + 
                                         ((To[i, j-1] - 2*To[i,j] + To[i, j+1])/dy**2))
-            
-            
-    
-    # aplicando as temperaturas no buraco da chapa, pois são constantes
-    for k in range(int(n/4)):
-        T[meio-tamanho+k, meio-tamanho:meio+tamanho] = Tb
+            # aplicando as temperaturas no buraco da chapa, pois são constantes
+            for k in range(int(n/4)):
+                T[meio-tamanho+k, meio-tamanho:meio+tamanho] = Tb
     
     t += dt
     # verifica se chegou nos tempos para salvar o estado atual e depois plotar
@@ -58,7 +56,7 @@ while True:
     elif t >= 20 and imag_20s:
         imag_20s = False
         T20 = T.copy()
-    elif t >= 30:
+    elif t >= tempo_total:
         T30 = T.copy()
         # saindo do loop pois t já chegou em 30s
         break
@@ -75,16 +73,13 @@ def salvar_grafico(arquivo_nome, matrix, tempo):
     plt.ylim([-0.02, 0.82])
     plt.title(f'Chapa Plana (1): malha com n={n} e t={tempo}s')
     grafico = ax.contour(X, Y, matrix, 12, vmin=Te, vmax=Tb, linewidths=1, cmap='rainbow') 
-    #chapa = plt.Rectangle((0,0), 0.8, 0.8, edgecolor='lightgrey', facecolor='wheat')
-    #buraco = plt.Rectangle((0.3, 0.3), 0.2, 0.2, edgecolor='lightgrey', facecolor='white')
-    #plt.gca().add_patch(chapa)
-    #plt.gca().add_patch(buraco)
     ax.clabel(grafico, fontsize=5, fmt ='%1.1f')
     plt.savefig(f'{arquivo_nome}{tempo}.png', dpi=200)
     ax.clear()
 
+
 # salvando as imagens
 salvar_grafico('chapa_01_t', T10, 10)
 salvar_grafico('chapa_01_t', T20, 20)
-salvar_grafico('chapa_01_t', T30, 30)
+salvar_grafico('chapa_01_t', T30, tempo_total)
 print('tempo: {}  FIM'.format(time.time()-inicio))

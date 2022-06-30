@@ -63,7 +63,7 @@ while True:
         T20 = T.copy()
     elif t >= tempo_total:
         T30 = T.copy()
-
+        print(1)
 # por ser 3 gráficos decidi salvar como imagem para visualizar todos no final
 # preparando plot
 X, Y = np.meshgrid(x, y)
@@ -84,5 +84,5 @@ def salvar_grafico(arquivo_nome, matrix, tempo):
 # salvando as imagens
 salvar_grafico('chapa_02_t', T10, 10)
 salvar_grafico('chapa_02_t', T20, 20)
-salvar_grafico('chapa_02_t', T30, tempo_total)
-print('tempo: {}  FIM'.format(time.time()-inicio))
+salvar_grafico('chapa_02_t', T30, 30)
+print('tempo: {}  FIM'.format(time.time()-inicio))        
